@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2017 DarkKat
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<resources>
+
+    <!-- TerminalSettingsActivity label -->
+    <string name="settings_title">Settings</string>
+
+    <!-- Preference Categories -->
+    <string name="settings_cat_screen_title">Screen</string>
+    <string name="settings_cat_colors_title">Colors</string>
+    <string name="settings_cat_text_title">Text</string>
+
+    <!-- Preference (dialog) titles and summaries -->
+    <string name="volumekey_summary">Enable to use the volume Up/Down keys to input Up/Down keys</string>
+    <string name="text_color_title">Text</string>
+    <string name="text_color_dlg_title">Text color</string>
+    <string name="background_color_title">Background</string>
+    <string name="background_color_dlg_title">Background color</string>
+
+    <!-- Color titles -->
+    <string name="black_title">Black</string>
+    <string name="white_title">White</string>
+    <string name="material_green_500_title">Material Green 500</string>
+    <string name="material_amber_500_title">Material Amber 500</string>
+    <string name="material_red_500_title">Material Red 500</string>
+    <string name="material_blue_500_title">Material Blue 500</string>
+    <string name="material_teal_500_title">Material Teal 500</string>
+    <string name="material_cyan_500_title">Material Cyan 500</string>
+    <string name="material_indigo_500_title">Material Indigo 500</string>
+    <string name="material_purple_500_title">Material Purple 500</string>
+    <string name="material_yellow_500_title">Material Yellow 500</string>
+    <string name="material_orange_500_title">Material Orange 500</string>
+</resources>

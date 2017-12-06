@@ -33,9 +33,11 @@ import static com.android.terminal.Terminal.TAG;
 public class TerminalSettingsActivity extends PreferenceActivity {
 
     public static final String KEY_SCREEN_ORIENTATION = "screen_orientation";
-    public static final String KEY_FONT_SIZE = "font_size";
-    public static final String KEY_TEXT_COLORS = "text_colors";
-    public static final String KEY_VOLUME_MODE = "volumekey_mode";
+    public static final String KEY_FONT_SIZE          = "font_size";
+    public static final String KEY_TEXT_COLORS        = "text_colors";
+    public static final String KEY_VOLUME_MODE        = "volumekey_mode";
+    public static final String KEY_TEXT_COLOR         = "text_color";
+    public static final String KEY_BACKGROUND_COLOR   = "background_color";
 
     private ListPreference mScreenOrientationPref;
     private ListPreference mFontSizePref;

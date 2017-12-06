@@ -20,6 +20,7 @@ import static com.android.terminal.Terminal.TAG;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
@@ -352,27 +353,28 @@ public class TerminalView extends ListView {
 
     public void updatePreferences() {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String val;
 
-        val = sp.getString(TerminalSettingsActivity.KEY_FONT_SIZE, "12");
+        String val = sp.getString(TerminalSettingsActivity.KEY_FONT_SIZE, "12");
         mMetrics.setTextSize(ptToDp(Float.parseFloat(val)));
 
-        val = sp.getString(TerminalSettingsActivity.KEY_TEXT_COLORS, "white/black");
-        int fg = 0xfafafa;
-        int bg = 0x212121;
-        int idx = val.indexOf('/');
-        if (idx != -1) {
-            try {
-                fg = Color.parseColor(val.substring(0, idx));
-                bg = Color.parseColor(val.substring(idx + 1));
-            }
-            catch (IllegalArgumentException e) {
-                // Ignore
-            }
-        }
+        String fgStringIndex = sp.getString(TerminalSettingsActivity.KEY_TEXT_COLOR, "1");
+        String bgStringIndex = sp.getString(TerminalSettingsActivity.KEY_BACKGROUND_COLOR, "0");
+        int fgIndex = Integer.valueOf(fgStringIndex);
+        int bgIndex = Integer.valueOf(bgStringIndex);
+        int fg = getTextOrbackgroundColor(fgIndex);
+        int bg = getTextOrbackgroundColor(bgIndex);
+
         mTerm.setColors(fg, bg);
         mMetrics.run.fg = fg;
         mMetrics.run.bg = bg;
         mMetrics.cursorPaint.setColor(fg);
+    }
+
+    private int getTextOrbackgroundColor(int index) {
+        TypedArray colors =
+                getContext().getResources().obtainTypedArray(R.array.text_background_hex_color_values);
+        int color = getContext().getColor(colors.getResourceId(index, 0));
+        colors.recycle();
+        return color;
     }
 }
