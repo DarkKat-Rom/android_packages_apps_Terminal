@@ -21,7 +21,6 @@ import static com.android.terminal.Terminal.TAG;
 import android.Manifest;
 import android.animation.LayoutTransition;
 import android.app.Activity;
-import android.app.UiModeManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -45,8 +44,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toolbar;
-
-import com.android.internal.util.darkkat.ThemeHelper;
 
 /**
  * Activity that displays all {@link Terminal} instances running in a bound
