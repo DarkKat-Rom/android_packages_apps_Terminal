@@ -361,8 +361,8 @@ public class TerminalView extends ListView {
         String bgStringIndex = sp.getString(TerminalSettingsActivity.KEY_BACKGROUND_COLOR, "0");
         int fgIndex = Integer.valueOf(fgStringIndex);
         int bgIndex = Integer.valueOf(bgStringIndex);
-        int fg = getTextOrbackgroundColor(fgIndex);
-        int bg = getTextOrbackgroundColor(bgIndex);
+        int fg = getTextOrBackgroundColor(fgIndex);
+        int bg = getTextOrBackgroundColor(bgIndex);
 
         mTerm.setColors(fg, bg);
         mMetrics.run.fg = fg;
@@ -370,7 +370,7 @@ public class TerminalView extends ListView {
         mMetrics.cursorPaint.setColor(fg);
     }
 
-    private int getTextOrbackgroundColor(int index) {
+    private int getTextOrBackgroundColor(int index) {
         TypedArray colors =
                 getContext().getResources().obtainTypedArray(R.array.text_background_hex_color_values);
         int color = getContext().getColor(colors.getResourceId(index, 0));
