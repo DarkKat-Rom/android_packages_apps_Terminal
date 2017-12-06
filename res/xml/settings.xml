@@ -25,10 +25,6 @@
         android:defaultValue="false" />
     <PreferenceCategory
         android:title="@string/screen_settings">
-        <SwitchPreference
-            android:key="fullscreen_mode"
-            android:title="@string/fullscreen_mode_title"
-            android:defaultValue="false" />
         <ListPreference
             android:key="screen_orientation"
             android:title="@string/screen_orientation_title"

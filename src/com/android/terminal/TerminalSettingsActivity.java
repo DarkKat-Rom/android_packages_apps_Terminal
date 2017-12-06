@@ -32,13 +32,11 @@ import static com.android.terminal.Terminal.TAG;
  */
 public class TerminalSettingsActivity extends PreferenceActivity {
 
-    public static final String KEY_FULLSCREEN_MODE = "fullscreen_mode";
     public static final String KEY_SCREEN_ORIENTATION = "screen_orientation";
     public static final String KEY_FONT_SIZE = "font_size";
     public static final String KEY_TEXT_COLORS = "text_colors";
     public static final String KEY_VOLUME_MODE = "volumekey_mode";
 
-    private SwitchPreference mFullscreenModePref;
     private ListPreference mScreenOrientationPref;
     private ListPreference mFontSizePref;
     private ListPreference mTextColorsPref;
@@ -48,7 +46,6 @@ public class TerminalSettingsActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
 
-        mFullscreenModePref = (SwitchPreference) findPreference(KEY_FULLSCREEN_MODE);
         mScreenOrientationPref = (ListPreference) findPreference(KEY_SCREEN_ORIENTATION);
         mFontSizePref = (ListPreference) findPreference(KEY_FONT_SIZE);
         mTextColorsPref = (ListPreference) findPreference(KEY_TEXT_COLORS);

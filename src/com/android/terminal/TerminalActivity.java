@@ -21,6 +21,7 @@ import static com.android.terminal.Terminal.TAG;
 import android.Manifest;
 import android.animation.LayoutTransition;
 import android.app.Activity;
+import android.app.UiModeManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -44,6 +45,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toolbar;
+
+import com.android.internal.util.darkkat.ThemeHelper;
 
 /**
  * Activity that displays all {@link Terminal} instances running in a bound
@@ -151,28 +154,8 @@ public class TerminalActivity extends Activity {
         }
     };
 
-    private final View.OnSystemUiVisibilityChangeListener mUiVisibilityChangeListener =
-            new View.OnSystemUiVisibilityChangeListener() {
-        @Override
-        public void onSystemUiVisibilityChange(int visibility) {
-            if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) != 0) {
-                getActionBar().hide();
-            } else {
-                getActionBar().show();
-            }
-        }
-    };
-
     public void updatePreferences() {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        if (sp.getBoolean(TerminalSettingsActivity.KEY_FULLSCREEN_MODE, false)) {
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
-            getActionBar().hide();
-        } else {
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-            getActionBar().show();
-        }
-
         final String orientation = sp.getString(TerminalSettingsActivity.KEY_SCREEN_ORIENTATION,
                 "automatic");
         if (orientation.equals("automatic")) {
@@ -206,9 +189,6 @@ public class TerminalActivity extends Activity {
         mTitles = (PagerTitleStrip) findViewById(R.id.titles);
 
         mPager.setAdapter(mTermAdapter);
-
-        View decorView = getWindow().getDecorView();
-        decorView.setOnSystemUiVisibilityChangeListener(mUiVisibilityChangeListener);
 
         ViewGroup root = (ViewGroup) findViewById(R.id.root);
         root.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);

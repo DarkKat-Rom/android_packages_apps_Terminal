@@ -114,26 +114,10 @@ public class TerminalView extends ListView {
         }
     }
 
-    private void toggleFullscreenMode() {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
-        boolean oldVal = sp.getBoolean(TerminalSettingsActivity.KEY_FULLSCREEN_MODE, false);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putBoolean(TerminalSettingsActivity.KEY_FULLSCREEN_MODE, !oldVal);
-        editor.commit();
-        TerminalActivity activity = (TerminalActivity) getContext();
-        activity.updatePreferences();
-    }
-
     private final AdapterView.OnItemClickListener mClickListener =
             new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View v, int pos, long id) {
-            // Clicking on top half of view toggles fullscreen mode
-            if (pos - mScrollRows < mRows / 2) {
-                toggleFullscreenMode();
-                return;
-            }
-            // Clicking on bottom half of view shows soft keyboard
             if (parent.requestFocus()) {
                 InputMethodManager imm = (InputMethodManager)
                         parent.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
