@@ -18,13 +18,7 @@
 
     <application
         android:label="@string/app_label"
-        android:icon="@mipmap/ic_launcher"
-        android:enabled="false"
-        android:theme="@style/TermTheme">
-
-	<uses-sdk
-		android:minSdkVersion="23"
-		android:targetSdkVersion="25" />
+        android:enabled="false">
 
         <activity
             android:name=".TerminalActivity"
