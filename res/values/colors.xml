@@ -15,7 +15,8 @@
 -->
 <resources>
 
-    <!-- Day (Material.Light) theme colors -->
+    <!-- Theme Material light -->
+
     <color name="theme_primary">#ff3f51b5</color>  <!-- material indigo 500 -->
     <color name="theme_primary_dark">#ff303f9f</color>  <!-- material indigo 700 -->
 </resources>
