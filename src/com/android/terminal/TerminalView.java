@@ -21,10 +21,13 @@ import static com.android.terminal.Terminal.TAG;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
@@ -40,6 +43,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+
+import com.android.internal.util.darkkat.ColorHelper;
 
 import com.android.terminal.Terminal.CellRun;
 import com.android.terminal.Terminal.TerminalClient;
@@ -60,6 +65,8 @@ public class TerminalView extends ListView {
     private int mRows;
     private int mCols;
     private int mScrollRows;
+
+    private int mScrollBarColor = Color.BLACK;
 
     private final TerminalMetrics mMetrics = new TerminalMetrics();
     private final TerminalKeys mTermKeys = new TerminalKeys();
@@ -153,10 +160,6 @@ public class TerminalView extends ListView {
     public TerminalView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
-        setVerticalScrollBarEnabled(false);
-        setHorizontalScrollBarEnabled(false);
-        setFastScrollEnabled(false);
-
         setBackground(null);
         setDivider(null);
 
@@ -247,6 +250,13 @@ public class TerminalView extends ListView {
             return res;
         }
     };
+
+    @Override
+    protected void onDrawVerticalScrollBar(Canvas canvas, Drawable scrollBar,
+            int l, int t, int r, int b) {
+        scrollBar.setColorFilter(mScrollBarColor, Mode.SRC_IN);
+        super.onDrawVerticalScrollBar(canvas, scrollBar, l, t, r, b);
+    }
 
     @Override
     public void onRestoreInstanceState(Parcelable state) {
@@ -367,6 +377,7 @@ public class TerminalView extends ListView {
         int bgIndex = Integer.valueOf(bgStringIndex);
         int fg = getTextOrBackgroundColor(fgIndex);
         int bg = getTextOrBackgroundColor(bgIndex);
+        mScrollBarColor = ColorHelper.isColorDark(bg) ? Color.WHITE : Color.BLACK;
 
         setBackgroundColor(bg);
         mTerm.setColors(fg, bg);
