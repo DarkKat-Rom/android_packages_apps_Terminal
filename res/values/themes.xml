@@ -24,4 +24,30 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
     </style>
+
+    <style name="ThemeOverlay" parent="@style/TermTheme" />
+
+    <style name="ThemeOverlay.LightStatusBar">
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:colorPrimary">@color/background_light_action_bar</item>
+        <item name="android:colorPrimaryDark">@color/background_light_system_bars</item>
+        <item name="android:actionBarTheme">@android:style/ThemeOverlay.Material.ActionBar</item>
+    </style>
+
+    <style name="ThemeOverlay.LightNavigationBar">
+        <item name="android:navigationBarColor">@color/background_light_system_bars</item>
+    </style>
+
+    <style name="ThemeOverlay.LightStatusBar.LightNavigationBar">
+        <item name="android:navigationBarColor">@color/background_light_system_bars</item>
+    </style>
+
+    <style name="ThemeOverlay.NoActionBar" parent="@style/TermTheme.NoActionBar" />
+
+    <style name="ThemeOverlay.NoActionBar.LightStatusBar">
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:colorPrimary">@color/background_light_action_bar</item>
+        <item name="android:colorPrimaryDark">@color/background_light_system_bars</item>
+        <item name="android:actionBarTheme">@android:style/ThemeOverlay.Material.ActionBar</item>
+    </style>
 </resources>

@@ -16,6 +16,7 @@
 
 package com.android.terminal;
 
+import android.app.UiModeManager;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -24,9 +25,10 @@ import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 
 import static com.android.terminal.Terminal.TAG;
-
+import com.android.internal.util.darkkat.ThemeHelper;
 /**
  * Settings for Terminal.
  */
@@ -39,12 +41,63 @@ public class TerminalSettingsActivity extends PreferenceActivity {
     public static final String KEY_TEXT_COLOR         = "text_color";
     public static final String KEY_BACKGROUND_COLOR   = "background_color";
 
+    private boolean mUseOptionalLightStatusBar;
+    private boolean mUseOptionalLightNavigationBar;
+
     private ListPreference mScreenOrientationPref;
     private ListPreference mFontSizePref;
     private ListPreference mTextColorsPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mUseOptionalLightStatusBar = ThemeHelper.themeSupportsOptionalĹightSB(this)
+                && ThemeHelper.useLightStatusBar(this);
+        mUseOptionalLightNavigationBar = ThemeHelper.themeSupportsOptionalĹightNB(this)
+                && ThemeHelper.useLightNavigationBar(this);
+        int themeResId = 0;
+
+        if (mUseOptionalLightStatusBar && mUseOptionalLightNavigationBar) {
+            themeResId = R.style.ThemeOverlay_LightStatusBar_LightNavigationBar;
+        } else if (mUseOptionalLightStatusBar) {
+            themeResId = R.style.ThemeOverlay_LightStatusBar;
+        } else if (mUseOptionalLightNavigationBar) {
+            themeResId = R.style.ThemeOverlay_LightNavigationBar;
+        } else {
+            themeResId = R.style.TermTheme;
+        }
+        setTheme(themeResId);
+
+        int oldFlags = getWindow().getDecorView().getSystemUiVisibility();
+        int newFlags = oldFlags;
+        if (!mUseOptionalLightStatusBar) {
+            // Possibly we are using the Whiteout theme
+            boolean isWhiteoutTheme =
+                    ThemeHelper.getTheme(this) == UiModeManager.MODE_NIGHT_NO_WHITEOUT;
+            boolean isLightStatusBar = (newFlags & View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
+                    == View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            // Check if light status bar flag was set,
+            // and we are not using the Whiteout theme,
+            // (Whiteout theme should always use a light status bar).
+            if (isLightStatusBar && !isWhiteoutTheme) {
+                // Remove flag
+                newFlags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            }
+        }
+        if (mUseOptionalLightNavigationBar) {
+            newFlags |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+        } else {
+            // Check if light navigation bar flag was set
+            boolean isLightNavigationBar = (newFlags & View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR)
+                    == View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+            if (isLightNavigationBar) {
+                // Remove flag
+                newFlags &= ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+            }
+        }
+        if (oldFlags != newFlags) {
+            getWindow().getDecorView().setSystemUiVisibility(newFlags);
+        }
+
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
 
@@ -53,6 +106,20 @@ public class TerminalSettingsActivity extends PreferenceActivity {
         mTextColorsPref = (ListPreference) findPreference(KEY_TEXT_COLORS);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        boolean useOptionalLightStatusBar = ThemeHelper.themeSupportsOptionalĹightSB(this)
+                && ThemeHelper.useLightStatusBar(this);
+        boolean useOptionalLightNavigationBar = ThemeHelper.themeSupportsOptionalĹightNB(this)
+                && ThemeHelper.useLightNavigationBar(this);
+        if (mUseOptionalLightStatusBar != useOptionalLightStatusBar
+                || mUseOptionalLightNavigationBar != useOptionalLightNavigationBar) {
+            recreate();
+        }
     }
 
     @Override

@@ -21,6 +21,7 @@ import static com.android.terminal.Terminal.TAG;
 import android.Manifest;
 import android.animation.LayoutTransition;
 import android.app.Activity;
+import android.app.UiModeManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -45,11 +46,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toolbar;
 
+import com.android.internal.util.darkkat.ThemeHelper;
+
 /**
  * Activity that displays all {@link Terminal} instances running in a bound
  * {@link TerminalService}.
  */
 public class TerminalActivity extends Activity {
+
+    private boolean mUseOptionalLightStatusBar;
 
     private TerminalService mService;
 
@@ -175,6 +180,35 @@ public class TerminalActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mUseOptionalLightStatusBar = ThemeHelper.themeSupportsOptionalĹightSB(this)
+                && ThemeHelper.useLightStatusBar(this);
+        int themeResId = R.style.TermTheme_NoActionBar;
+
+        if (mUseOptionalLightStatusBar) {
+            themeResId = R.style.ThemeOverlay_NoActionBar_LightStatusBar;
+        }
+        setTheme(themeResId);
+
+        int oldFlags = getWindow().getDecorView().getSystemUiVisibility();
+        int newFlags = oldFlags;
+        if (!mUseOptionalLightStatusBar) {
+            // Possibly we are using the Whiteout theme
+            boolean isWhiteoutTheme =
+                    ThemeHelper.getTheme(this) == UiModeManager.MODE_NIGHT_NO_WHITEOUT;
+            boolean isLightStatusBar = (newFlags & View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
+                    == View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            // Check if light status bar flag was set,
+            // and we are not using the Whiteout theme,
+            // (Whiteout theme should always use a light status bar).
+            if (isLightStatusBar && !isWhiteoutTheme) {
+                // Remove flag
+                newFlags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            }
+        }
+        if (oldFlags != newFlags) {
+            getWindow().getDecorView().setSystemUiVisibility(newFlags);
+        }
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity);
@@ -207,8 +241,16 @@ public class TerminalActivity extends Activity {
 
     @Override
     protected void onResume() {
-        updatePreferences();
         super.onResume();
+        boolean useOptionalLightStatusBar = ThemeHelper.themeSupportsOptionalĹightSB(this)
+                && ThemeHelper.useLightStatusBar(this);
+        boolean useOptionalLightNavigationBar = ThemeHelper.themeSupportsOptionalĹightNB(this)
+                && ThemeHelper.useLightNavigationBar(this);
+        if (mUseOptionalLightStatusBar != useOptionalLightStatusBar) {
+            recreate();
+        } else {
+            updatePreferences();
+        }
     }
 
     @Override
