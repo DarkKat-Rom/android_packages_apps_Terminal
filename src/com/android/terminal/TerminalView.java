@@ -153,6 +153,10 @@ public class TerminalView extends ListView {
     public TerminalView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
+        setVerticalScrollBarEnabled(false);
+        setHorizontalScrollBarEnabled(false);
+        setFastScrollEnabled(false);
+
         setBackground(null);
         setDivider(null);
 
@@ -364,6 +368,7 @@ public class TerminalView extends ListView {
         int fg = getTextOrBackgroundColor(fgIndex);
         int bg = getTextOrBackgroundColor(bgIndex);
 
+        setBackgroundColor(bg);
         mTerm.setColors(fg, bg);
         mMetrics.run.fg = fg;
         mMetrics.run.bg = bg;
