@@ -49,6 +49,8 @@ import com.android.internal.util.darkkat.ColorHelper;
 import com.android.terminal.Terminal.CellRun;
 import com.android.terminal.Terminal.TerminalClient;
 
+import net.darkkatrom.dkcolorpicker.util.ColorPickerHelper;
+
 /**
  * Rendered contents of a {@link Terminal} session.
  */
@@ -387,10 +389,9 @@ public class TerminalView extends ListView {
     }
 
     private int getTextOrBackgroundColor(int index) {
-        TypedArray colors =
-                getContext().getResources().obtainTypedArray(R.array.text_background_hex_color_values);
-        int color = getContext().getColor(colors.getResourceId(index, 0));
-        colors.recycle();
+        String[] colors =
+                getContext().getResources().getStringArray(R.array.text_background_hex_color_values);
+        int color = ColorPickerHelper.convertToColorInt(colors[index]);
         return color;
     }
 }

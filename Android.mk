@@ -5,9 +5,18 @@ LOCAL_MODULE_TAGS := optional
 
 LOCAL_SRC_FILES := $(call all-subdir-java-files)
 
-LOCAL_STATIC_JAVA_LIBRARIES := android-support-v4
+LOCAL_STATIC_JAVA_LIBRARIES := \
+    android-support-v4 \
+    dkcolorpicker
 
 LOCAL_JNI_SHARED_LIBRARIES := libjni_terminal
+
+LOCAL_RESOURCE_DIR := $(LOCAL_PATH)/res \
+    external/dkcolorpicker/res
+
+LOCAL_AAPT_FLAGS := \
+    --auto-add-overlay \
+    --extra-packages net.darkkatrom.dkcolorpicker
 
 # TODO: enable proguard once development has settled down
 #LOCAL_PROGUARD_FLAG_FILES := proguard.flags
