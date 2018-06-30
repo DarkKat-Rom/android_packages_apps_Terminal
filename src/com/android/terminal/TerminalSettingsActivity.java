@@ -17,6 +17,7 @@
 package com.android.terminal;
 
 import android.app.UiModeManager;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -28,7 +29,10 @@ import android.view.MenuItem;
 import android.view.View;
 
 import static com.android.terminal.Terminal.TAG;
+import com.android.internal.util.darkkat.ThemeColorHelper;
+import com.android.internal.util.darkkat.ColorHelper;
 import com.android.internal.util.darkkat.ThemeHelper;
+
 /**
  * Settings for Terminal.
  */
@@ -41,8 +45,19 @@ public class TerminalSettingsActivity extends PreferenceActivity {
     public static final String KEY_TEXT_COLOR         = "text_color";
     public static final String KEY_BACKGROUND_COLOR   = "background_color";
 
-    private boolean mUseOptionalLightStatusBar;
-    private boolean mUseOptionalLightNavigationBar;
+    private int mThemeResId = 0;
+    private boolean mCustomizeColors = false;
+    private int mDefaultPrimaryColor = 0;
+    private int mStatusBarColor = 0;
+    private int mPrimaryColor = 0;
+    private int mNavigationColor = 0;
+    private boolean mColorizeNavigationBar = false;
+    private boolean mLightStatusBar = false;
+    private boolean mLightActionBar = false;
+    private boolean mLightNavigationBar = false;
+    private boolean mIsBlackoutTheme = false;
+    private boolean mIsWhiteoutTheme = false;
+    private int mThemeOverlayAccentResId = 0;
 
     private ListPreference mScreenOrientationPref;
     private ListPreference mFontSizePref;
@@ -50,42 +65,62 @@ public class TerminalSettingsActivity extends PreferenceActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mUseOptionalLightStatusBar = ThemeHelper.themeSupportsOptionalĹightSB(this)
-                && ThemeHelper.useLightStatusBar(this);
-        mUseOptionalLightNavigationBar = ThemeHelper.themeSupportsOptionalĹightNB(this)
-                && ThemeHelper.useLightNavigationBar(this);
-        int themeResId = 0;
+        updateTheme();
+        super.onCreate(savedInstanceState);
+        addPreferencesFromResource(R.xml.settings);
 
-        if (mUseOptionalLightStatusBar && mUseOptionalLightNavigationBar) {
-            themeResId = R.style.ThemeOverlay_LightStatusBar_LightNavigationBar;
-        } else if (mUseOptionalLightStatusBar) {
-            themeResId = R.style.ThemeOverlay_LightStatusBar;
-        } else if (mUseOptionalLightNavigationBar) {
-            themeResId = R.style.ThemeOverlay_LightNavigationBar;
+        mScreenOrientationPref = (ListPreference) findPreference(KEY_SCREEN_ORIENTATION);
+        mFontSizePref = (ListPreference) findPreference(KEY_FONT_SIZE);
+        mTextColorsPref = (ListPreference) findPreference(KEY_TEXT_COLORS);
+
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void updateTheme() {
+        mCustomizeColors = ThemeColorHelper.customizeColors(this);
+        mDefaultPrimaryColor = getColor(R.color.theme_primary);
+        mStatusBarColor = ThemeColorHelper.getStatusBarBackgroundColor(this, mDefaultPrimaryColor);
+        mPrimaryColor = ThemeColorHelper.getPrimaryColor(this, mDefaultPrimaryColor);
+        mNavigationColor = ThemeColorHelper.getNavigationBarBackgroundColor(this, mDefaultPrimaryColor);
+        mColorizeNavigationBar = ThemeColorHelper.colorizeNavigationBar(this);
+        mLightStatusBar = ThemeColorHelper.lightStatusBar(this, mDefaultPrimaryColor);
+        mLightActionBar = ThemeColorHelper.lightActionBar(this, mDefaultPrimaryColor);
+        mLightNavigationBar = ThemeColorHelper.lightNavigationBar(this, mDefaultPrimaryColor);
+        mIsBlackoutTheme = ThemeHelper.isBlackoutTheme(this);
+        mIsWhiteoutTheme = ThemeHelper.isWhiteoutTheme(this);
+
+        if (mLightActionBar && mLightNavigationBar) {
+            mThemeResId = mLightStatusBar
+                    ? R.style.TermTheme_LightStatusBar_LightNavigationBar
+                    : R.style.TermTheme_LightActionBar_LightNavigationBar;
+        } else if (mLightActionBar) {
+            mThemeResId = mLightStatusBar
+                    ? R.style.TermTheme_LightStatusBar
+                    : R.style.TermTheme_LightActionBar;
+        } else if (mLightNavigationBar) {
+            mThemeResId = R.style.TermTheme_LightNavigationBar;
         } else {
-            themeResId = R.style.TermTheme;
+            mThemeResId = R.style.TermTheme;
         }
-        setTheme(themeResId);
+        setTheme(mThemeResId);
+
+        mThemeOverlayAccentResId = ThemeColorHelper.getThemeOverlayAccentResId(this);
+        if (mThemeOverlayAccentResId > 0) {
+            getTheme().applyStyle(mThemeOverlayAccentResId, true);
+        }
 
         int oldFlags = getWindow().getDecorView().getSystemUiVisibility();
         int newFlags = oldFlags;
-        if (!mUseOptionalLightStatusBar) {
-            // Possibly we are using the Whiteout theme
-            boolean isWhiteoutTheme =
-                    ThemeHelper.getTheme(this) == UiModeManager.MODE_NIGHT_NO_WHITEOUT;
+        if (!mLightStatusBar) {
             boolean isLightStatusBar = (newFlags & View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
                     == View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-            // Check if light status bar flag was set,
-            // and we are not using the Whiteout theme,
-            // (Whiteout theme should always use a light status bar).
-            if (isLightStatusBar && !isWhiteoutTheme) {
+            // Check if light status bar flag was set.
+            if (isLightStatusBar) {
                 // Remove flag
                 newFlags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
             }
         }
-        if (mUseOptionalLightNavigationBar) {
-            newFlags |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
-        } else {
+        if (!mLightNavigationBar) {
             // Check if light navigation bar flag was set
             boolean isLightNavigationBar = (newFlags & View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR)
                     == View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
@@ -98,26 +133,34 @@ public class TerminalSettingsActivity extends PreferenceActivity {
             getWindow().getDecorView().setSystemUiVisibility(newFlags);
         }
 
-        super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.settings);
-
-        mScreenOrientationPref = (ListPreference) findPreference(KEY_SCREEN_ORIENTATION);
-        mFontSizePref = (ListPreference) findPreference(KEY_FONT_SIZE);
-        mTextColorsPref = (ListPreference) findPreference(KEY_TEXT_COLORS);
-
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        if (mCustomizeColors && !mIsBlackoutTheme && !mIsWhiteoutTheme) {
+            getWindow().setStatusBarColor(mStatusBarColor);
+            getActionBar().setBackgroundDrawable(new ColorDrawable(mPrimaryColor));
+        }
+        if (mNavigationColor != 0) {
+            getWindow().setNavigationBarColor(mNavigationColor);
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        boolean useOptionalLightStatusBar = ThemeHelper.themeSupportsOptionalĹightSB(this)
-                && ThemeHelper.useLightStatusBar(this);
-        boolean useOptionalLightNavigationBar = ThemeHelper.themeSupportsOptionalĹightNB(this)
-                && ThemeHelper.useLightNavigationBar(this);
-        if (mUseOptionalLightStatusBar != useOptionalLightStatusBar
-                || mUseOptionalLightNavigationBar != useOptionalLightNavigationBar) {
+        boolean customizeColors = ThemeColorHelper.customizeColors(this);
+        int primaryColor = ThemeColorHelper.getPrimaryColor(this, mDefaultPrimaryColor);
+        boolean colorizeNavigationBar = ThemeColorHelper.colorizeNavigationBar(this);
+        boolean lightStatusBar = ThemeColorHelper.lightStatusBar(this, mDefaultPrimaryColor);
+        boolean lightActionBar = ThemeColorHelper.lightActionBar(this, mDefaultPrimaryColor);
+        boolean lightNavigationBar = ThemeColorHelper.lightNavigationBar(this, mDefaultPrimaryColor);
+        int themeOverlayAccentResId = ThemeColorHelper.getThemeOverlayAccentResId(this);
+
+        if (mThemeOverlayAccentResId != themeOverlayAccentResId
+                || mCustomizeColors != customizeColors
+                || mPrimaryColor != primaryColor
+                || mColorizeNavigationBar != colorizeNavigationBar
+                || mLightStatusBar != lightStatusBar
+                || mLightActionBar != lightActionBar
+                || mLightNavigationBar != lightNavigationBar) {
             recreate();
         }
     }

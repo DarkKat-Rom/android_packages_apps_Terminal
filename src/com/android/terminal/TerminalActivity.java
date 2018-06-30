@@ -46,6 +46,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toolbar;
 
+import com.android.internal.util.darkkat.ThemeColorHelper;
+import com.android.internal.util.darkkat.ColorHelper;
 import com.android.internal.util.darkkat.ThemeHelper;
 
 /**
@@ -54,12 +56,24 @@ import com.android.internal.util.darkkat.ThemeHelper;
  */
 public class TerminalActivity extends Activity {
 
-    private boolean mUseOptionalLightStatusBar;
-
     private TerminalService mService;
 
     private ViewPager mPager;
     private PagerTitleStrip mTitles;
+
+    private int mThemeResId = 0;
+    private boolean mCustomizeColors = false;
+    private int mDefaultPrimaryColor = 0;
+    private int mStatusBarColor = 0;
+    private int mPrimaryColor = 0;
+    private int mNavigationColor = 0;
+    private boolean mColorizeNavigationBar = false;
+    private boolean mLightStatusBar = false;
+    private boolean mLightActionBar = false;
+    private boolean mLightNavigationBar = false;
+    private boolean mIsBlackoutTheme = false;
+    private boolean mIsWhiteoutTheme = false;
+    private int mThemeOverlayAccentResId = 0;
 
     private final ServiceConnection mServiceConn = new ServiceConnection() {
         @Override
@@ -180,35 +194,7 @@ public class TerminalActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mUseOptionalLightStatusBar = ThemeHelper.themeSupportsOptionalĹightSB(this)
-                && ThemeHelper.useLightStatusBar(this);
-        int themeResId = R.style.TermTheme_NoActionBar;
-
-        if (mUseOptionalLightStatusBar) {
-            themeResId = R.style.ThemeOverlay_NoActionBar_LightStatusBar;
-        }
-        setTheme(themeResId);
-
-        int oldFlags = getWindow().getDecorView().getSystemUiVisibility();
-        int newFlags = oldFlags;
-        if (!mUseOptionalLightStatusBar) {
-            // Possibly we are using the Whiteout theme
-            boolean isWhiteoutTheme =
-                    ThemeHelper.getTheme(this) == UiModeManager.MODE_NIGHT_NO_WHITEOUT;
-            boolean isLightStatusBar = (newFlags & View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
-                    == View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-            // Check if light status bar flag was set,
-            // and we are not using the Whiteout theme,
-            // (Whiteout theme should always use a light status bar).
-            if (isLightStatusBar && !isWhiteoutTheme) {
-                // Remove flag
-                newFlags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-            }
-        }
-        if (oldFlags != newFlags) {
-            getWindow().getDecorView().setSystemUiVisibility(newFlags);
-        }
-
+        updateTheme();
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity);
@@ -230,6 +216,76 @@ public class TerminalActivity extends Activity {
             != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_WRITE_STORAGE);
         }
+
+        if (mCustomizeColors && !mIsBlackoutTheme && !mIsWhiteoutTheme) {
+            toolbar.setBackgroundColor(mPrimaryColor);
+            mTitles.setBackgroundColor(mPrimaryColor);
+        }
+    }
+
+    private void updateTheme() {
+        mCustomizeColors = ThemeColorHelper.customizeColors(this);
+        mDefaultPrimaryColor = getColor(R.color.theme_primary);
+        mStatusBarColor = ThemeColorHelper.getStatusBarBackgroundColor(this, mDefaultPrimaryColor);
+        mPrimaryColor = ThemeColorHelper.getPrimaryColor(this, mDefaultPrimaryColor);
+        mNavigationColor = ThemeColorHelper.getNavigationBarBackgroundColor(this, mDefaultPrimaryColor);
+        mColorizeNavigationBar = ThemeColorHelper.colorizeNavigationBar(this);
+        mLightStatusBar = ThemeColorHelper.lightStatusBar(this, mDefaultPrimaryColor);
+        mLightActionBar = ThemeColorHelper.lightActionBar(this, mDefaultPrimaryColor);
+        mLightNavigationBar = ThemeColorHelper.lightNavigationBar(this, mDefaultPrimaryColor);
+        mIsBlackoutTheme = ThemeHelper.isBlackoutTheme(this);
+        mIsWhiteoutTheme = ThemeHelper.isWhiteoutTheme(this);
+
+        if (mLightActionBar && mLightNavigationBar) {
+            mThemeResId = mLightStatusBar
+                    ? R.style.TermTheme_NoActionBar_LightStatusBar_LightNavigationBar
+                    : R.style.TermTheme_NoActionBar_LightActionBar_LightNavigationBar;
+        } else if (mLightActionBar) {
+            mThemeResId = mLightStatusBar
+                    ? R.style.TermTheme_NoActionBar_LightStatusBar
+                    : R.style.TermTheme_NoActionBar_LightActionBar;
+        } else if (mLightNavigationBar) {
+            mThemeResId = R.style.TermTheme_NoActionBar_LightNavigationBar;
+        } else {
+            mThemeResId = R.style.TermTheme_NoActionBar;
+        }
+        setTheme(mThemeResId);
+
+        mThemeOverlayAccentResId = ThemeColorHelper.getThemeOverlayAccentResId(this);
+        if (mThemeOverlayAccentResId > 0) {
+            getTheme().applyStyle(mThemeOverlayAccentResId, true);
+        }
+
+        int oldFlags = getWindow().getDecorView().getSystemUiVisibility();
+        int newFlags = oldFlags;
+        if (!mLightStatusBar) {
+            boolean isLightStatusBar = (newFlags & View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
+                    == View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            // Check if light status bar flag was set.
+            if (isLightStatusBar) {
+                // Remove flag
+                newFlags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            }
+        }
+        if (!mLightNavigationBar) {
+            // Check if light navigation bar flag was set
+            boolean isLightNavigationBar = (newFlags & View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR)
+                    == View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+            if (isLightNavigationBar) {
+                // Remove flag
+                newFlags &= ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+            }
+        }
+        if (oldFlags != newFlags) {
+            getWindow().getDecorView().setSystemUiVisibility(newFlags);
+        }
+
+        if (mCustomizeColors && !mIsBlackoutTheme && !mIsWhiteoutTheme) {
+            getWindow().setStatusBarColor(mStatusBarColor);
+        }
+        if (mNavigationColor != 0) {
+            getWindow().setNavigationBarColor(mNavigationColor);
+        }
     }
 
     @Override
@@ -242,9 +298,21 @@ public class TerminalActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        boolean useOptionalLightStatusBar = ThemeHelper.themeSupportsOptionalĹightSB(this)
-                && ThemeHelper.useLightStatusBar(this);
-        if (mUseOptionalLightStatusBar != useOptionalLightStatusBar) {
+        boolean customizeColors = ThemeColorHelper.customizeColors(this);
+        int primaryColor = ThemeColorHelper.getPrimaryColor(this, mDefaultPrimaryColor);
+        boolean colorizeNavigationBar = ThemeColorHelper.colorizeNavigationBar(this);
+        boolean lightStatusBar = ThemeColorHelper.lightStatusBar(this, mDefaultPrimaryColor);
+        boolean lightActionBar = ThemeColorHelper.lightActionBar(this, mDefaultPrimaryColor);
+        boolean lightNavigationBar = ThemeColorHelper.lightNavigationBar(this, mDefaultPrimaryColor);
+        int themeOverlayAccentResId = ThemeColorHelper.getThemeOverlayAccentResId(this);
+
+        if (mThemeOverlayAccentResId != themeOverlayAccentResId
+                || mCustomizeColors != customizeColors
+                || mPrimaryColor != primaryColor
+                || mColorizeNavigationBar != colorizeNavigationBar
+                || mLightStatusBar != lightStatusBar
+                || mLightActionBar != lightActionBar
+                || mLightNavigationBar != lightNavigationBar) {
             recreate();
         } else {
             updatePreferences();
