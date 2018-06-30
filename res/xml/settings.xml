@@ -17,6 +17,7 @@
 
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:title="@string/menu_item_settings">
 
     <SwitchPreference
@@ -56,22 +57,24 @@
     <PreferenceCategory
         android:title="@string/settings_cat_colors_title">
 
-        <ListPreference
+        <net.darkkatrom.dkcolorpicker.preference.ColorPickerListPreference
             android:key="text_color"
             android:title="@string/text_color_title"
             android:summary="%s"
             android:dialogTitle="@string/text_color_dlg_title"
             android:entries="@array/text_background_color_entries"
             android:entryValues="@array/text_background_color_values"
+            app:entryColors="@array/text_background_hex_color_values"
             android:defaultValue="1" />
 
-        <ListPreference
+        <net.darkkatrom.dkcolorpicker.preference.ColorPickerListPreference
             android:key="background_color"
             android:title="@string/background_color_title"
             android:summary="%s"
             android:dialogTitle="@string/background_color_dlg_title"
             android:entries="@array/text_background_color_entries"
             android:entryValues="@array/text_background_color_values"
+            app:entryColors="@array/text_background_hex_color_values"
             android:defaultValue="0" />
 
     </PreferenceCategory>
