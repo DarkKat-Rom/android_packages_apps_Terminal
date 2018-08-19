@@ -16,82 +16,68 @@
     limitations under the License.
 -->
 <resources>
-    <style name="TermTheme" parent="@android:style/Theme.Material.DayNight.DarkActionBar">
-        <item name="android:colorPrimary">@color/theme_primary</item>
-        <item name="android:colorPrimaryDark">@color/theme_primary_dark</item>
-        <item name="android:colorAccent">@color/theme_accent</item>
+    <style name="TermTheme" parent="@android:style/Theme.DarkKat.DayNight">
+        <item name="android:colorPrimary">@android:color/material_indigo_500</item>
+        <item name="android:colorPrimaryDark">@android:color/material_indigo_700</item>
     </style>
 
-    <style name="TermTheme.LightActionBar" parent="@android:style/Theme.Material.DayNight.LightActionBar">
-        <item name="android:colorPrimaryDark">@color/theme_primary_dark</item>
-        <item name="android:colorAccent">@color/theme_accent</item>
+    <style name="TermTheme.LightActionBar" parent="@android:style/Theme.DarkKat.DayNight.LightActionBar">
+        <item name="android:colorPrimaryDark">@android:color/material_indigo_700</item>
     </style>
 
-    <style name="TermTheme.LightStatusBar" parent="@android:style/Theme.Material.DayNight.LightStatusBar">
-        <item name="android:colorAccent">@color/theme_accent</item>
-    </style>
+    <style name="TermTheme.LightStatusBar" parent="@android:style/Theme.DarkKat.DayNight.LightStatusBar" />
 
     <style name="TermTheme.LightNavigationBar"
-            parent="@android:style/Theme.Material.DayNight.DarkActionBar.LightNavigationBar">
-        <item name="android:colorPrimary">@color/theme_primary</item>
-        <item name="android:colorPrimaryDark">@color/theme_primary_dark</item>
-        <item name="android:colorAccent">@color/theme_accent</item>
+            parent="@android:style/Theme.DarkKat.DayNight.LightNavigationBar">
+        <item name="android:colorPrimary">@android:color/material_indigo_500</item>
+        <item name="android:colorPrimaryDark">@android:color/material_indigo_700</item>
     </style>
 
     <style name="TermTheme.LightActionBar.LightNavigationBar"
-            parent="@android:style/Theme.Material.DayNight.LightActionBar.LightNavigationBar">
-        <item name="android:colorPrimaryDark">@color/theme_primary_dark</item>
-        <item name="android:colorAccent">@color/theme_accent</item>
+            parent="@android:style/Theme.DarkKat.DayNight.LightActionBar.LightNavigationBar">
+        <item name="android:colorPrimaryDark">@android:color/material_indigo_700</item>
     </style>
 
     <style name="TermTheme.LightStatusBar.LightNavigationBar"
-            parent="@android:style/Theme.Material.DayNight.LightStatusBar.LightNavigationBar">
-        <item name="android:colorAccent">@color/theme_accent</item>
-    </style>
+            parent="@android:style/Theme.DarkKat.DayNight.LightStatusBar.LightNavigationBar" />
 
 
-    <style name="TermTheme.NoActionBar" parent="@android:style/Theme.Material.DayNight.DarkActionBar">
+    <style name="TermTheme.NoActionBar" parent="@android:style/Theme.DarkKat.DayNight">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
-        <item name="android:colorPrimary">@color/theme_primary</item>
-        <item name="android:colorPrimaryDark">@color/theme_primary_dark</item>
-        <item name="android:colorAccent">@color/theme_accent</item>
+        <item name="android:colorPrimary">@android:color/material_indigo_500</item>
+        <item name="android:colorPrimaryDark">@android:color/material_indigo_700</item>
     </style>
 
-    <style name="TermTheme.NoActionBar.LightActionBar" parent="@android:style/Theme.Material.DayNight.LightActionBar">
+    <style name="TermTheme.NoActionBar.LightActionBar" parent="@android:style/Theme.DarkKat.DayNight.LightActionBar">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
-        <item name="android:colorPrimaryDark">@color/theme_primary_dark</item>
-        <item name="android:colorAccent">@color/theme_accent</item>
+        <item name="android:colorPrimaryDark">@android:color/material_indigo_700</item>
     </style>
 
-    <style name="TermTheme.NoActionBar.LightStatusBar" parent="@android:style/Theme.Material.DayNight.LightStatusBar">
+    <style name="TermTheme.NoActionBar.LightStatusBar" parent="@android:style/Theme.DarkKat.DayNight.LightStatusBar">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
-        <item name="android:colorAccent">@color/theme_accent</item>
     </style>
 
     <style name="TermTheme.NoActionBar.LightNavigationBar"
-            parent="@android:style/Theme.Material.DayNight.DarkActionBar.LightNavigationBar">
+            parent="@android:style/Theme.DarkKat.DayNight.LightNavigationBar">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
-        <item name="android:colorPrimary">@color/theme_primary</item>
-        <item name="android:colorPrimaryDark">@color/theme_primary_dark</item>
-        <item name="android:colorAccent">@color/theme_accent</item>
+        <item name="android:colorPrimary">@android:color/material_indigo_500</item>
+        <item name="android:colorPrimaryDark">@android:color/material_indigo_700</item>
     </style>
 
     <style name="TermTheme.NoActionBar.LightActionBar.LightNavigationBar"
-            parent="@android:style/Theme.Material.DayNight.LightActionBar.LightNavigationBar">
+            parent="@android:style/Theme.DarkKat.DayNight.LightActionBar.LightNavigationBar">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
-        <item name="android:colorPrimaryDark">@color/theme_primary_dark</item>
-        <item name="android:colorAccent">@color/theme_accent</item>
+        <item name="android:colorPrimaryDark">@android:color/material_indigo_700</item>
     </style>
 
     <style name="TermTheme.NoActionBar.LightStatusBar.LightNavigationBar"
-            parent="@android:style/Theme.Material.DayNight.LightStatusBar.LightNavigationBar">
+            parent="@android:style/Theme.DarkKat.DayNight.LightStatusBar.LightNavigationBar">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
-        <item name="android:colorAccent">@color/theme_accent</item>
     </style>
 </resources>

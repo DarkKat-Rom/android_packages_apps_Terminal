@@ -78,7 +78,7 @@ public class TerminalSettingsActivity extends PreferenceActivity {
 
     private void updateTheme() {
         mCustomizeColors = ThemeColorHelper.customizeColors(this);
-        mDefaultPrimaryColor = getColor(R.color.theme_primary);
+        mDefaultPrimaryColor = getColor(com.android.internal.R.color.material_indigo_500);
         mStatusBarColor = ThemeColorHelper.getStatusBarBackgroundColor(this, mDefaultPrimaryColor);
         mPrimaryColor = ThemeColorHelper.getPrimaryColor(this, mDefaultPrimaryColor);
         mNavigationColor = ThemeColorHelper.getNavigationBarBackgroundColor(this, mDefaultPrimaryColor);

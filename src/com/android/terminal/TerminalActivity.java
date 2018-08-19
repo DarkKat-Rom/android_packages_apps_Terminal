@@ -21,7 +21,6 @@ import static com.android.terminal.Terminal.TAG;
 import android.Manifest;
 import android.animation.LayoutTransition;
 import android.app.Activity;
-import android.app.UiModeManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -47,7 +46,6 @@ import android.view.ViewGroup;
 import android.widget.Toolbar;
 
 import com.android.internal.util.darkkat.ThemeColorHelper;
-import com.android.internal.util.darkkat.ColorHelper;
 import com.android.internal.util.darkkat.ThemeHelper;
 
 /**
@@ -61,19 +59,19 @@ public class TerminalActivity extends Activity {
     private ViewPager mPager;
     private PagerTitleStrip mTitles;
 
-    private int mThemeResId = 0;
-    private boolean mCustomizeColors = false;
     private int mDefaultPrimaryColor = 0;
+    private int mThemeResId = 0;
+    private int mThemeOverlayAccentResId = 0;
+    private boolean mLightActionBar = false;
+    private boolean mLightStatusBar = false;
+    private boolean mLightNavigationBar = false;
     private int mStatusBarColor = 0;
     private int mPrimaryColor = 0;
-    private int mNavigationColor = 0;
-    private boolean mColorizeNavigationBar = false;
-    private boolean mLightStatusBar = false;
-    private boolean mLightActionBar = false;
-    private boolean mLightNavigationBar = false;
+    private boolean mCustomizeColors = false;
     private boolean mIsBlackoutTheme = false;
     private boolean mIsWhiteoutTheme = false;
-    private int mThemeOverlayAccentResId = 0;
+    private int mNavigationColor = 0;
+    private boolean mColorizeNavigationBar = false;
 
     private final ServiceConnection mServiceConn = new ServiceConnection() {
         @Override
@@ -224,17 +222,18 @@ public class TerminalActivity extends Activity {
     }
 
     private void updateTheme() {
-        mCustomizeColors = ThemeColorHelper.customizeColors(this);
-        mDefaultPrimaryColor = getColor(R.color.theme_primary);
+        mDefaultPrimaryColor = getColor(com.android.internal.R.color.material_indigo_500);
+        mThemeOverlayAccentResId = ThemeColorHelper.getThemeOverlayAccentResId(this);
+        mLightActionBar = ThemeColorHelper.lightActionBar(this, mDefaultPrimaryColor);
+        mLightStatusBar = ThemeColorHelper.lightStatusBar(this, mDefaultPrimaryColor);
+        mLightNavigationBar = ThemeColorHelper.lightNavigationBar(this, mDefaultPrimaryColor);
         mStatusBarColor = ThemeColorHelper.getStatusBarBackgroundColor(this, mDefaultPrimaryColor);
         mPrimaryColor = ThemeColorHelper.getPrimaryColor(this, mDefaultPrimaryColor);
-        mNavigationColor = ThemeColorHelper.getNavigationBarBackgroundColor(this, mDefaultPrimaryColor);
-        mColorizeNavigationBar = ThemeColorHelper.colorizeNavigationBar(this);
-        mLightStatusBar = ThemeColorHelper.lightStatusBar(this, mDefaultPrimaryColor);
-        mLightActionBar = ThemeColorHelper.lightActionBar(this, mDefaultPrimaryColor);
-        mLightNavigationBar = ThemeColorHelper.lightNavigationBar(this, mDefaultPrimaryColor);
+        mCustomizeColors = ThemeColorHelper.customizeColors(this);
         mIsBlackoutTheme = ThemeHelper.isBlackoutTheme(this);
         mIsWhiteoutTheme = ThemeHelper.isWhiteoutTheme(this);
+        mNavigationColor = ThemeColorHelper.getNavigationBarBackgroundColor(this, mDefaultPrimaryColor);
+        mColorizeNavigationBar = ThemeColorHelper.colorizeNavigationBar(this);
 
         if (mLightActionBar && mLightNavigationBar) {
             mThemeResId = mLightStatusBar
@@ -249,9 +248,10 @@ public class TerminalActivity extends Activity {
         } else {
             mThemeResId = R.style.TermTheme_NoActionBar;
         }
-        setTheme(mThemeResId);
+        if (mThemeResId > 0) {
+            setTheme(mThemeResId);
+        }
 
-        mThemeOverlayAccentResId = ThemeColorHelper.getThemeOverlayAccentResId(this);
         if (mThemeOverlayAccentResId > 0) {
             getTheme().applyStyle(mThemeOverlayAccentResId, true);
         }
@@ -298,21 +298,24 @@ public class TerminalActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        boolean customizeColors = ThemeColorHelper.customizeColors(this);
-        int primaryColor = ThemeColorHelper.getPrimaryColor(this, mDefaultPrimaryColor);
-        boolean colorizeNavigationBar = ThemeColorHelper.colorizeNavigationBar(this);
-        boolean lightStatusBar = ThemeColorHelper.lightStatusBar(this, mDefaultPrimaryColor);
-        boolean lightActionBar = ThemeColorHelper.lightActionBar(this, mDefaultPrimaryColor);
-        boolean lightNavigationBar = ThemeColorHelper.lightNavigationBar(this, mDefaultPrimaryColor);
+
         int themeOverlayAccentResId = ThemeColorHelper.getThemeOverlayAccentResId(this);
+        boolean lightActionBar = ThemeColorHelper.lightActionBar(this, mDefaultPrimaryColor);
+        boolean lightStatusBar = ThemeColorHelper.lightStatusBar(this, mDefaultPrimaryColor);
+        boolean lightNavigationBar = ThemeColorHelper.lightNavigationBar(this, mDefaultPrimaryColor);
+        int primaryColor = ThemeColorHelper.getPrimaryColor(this, mDefaultPrimaryColor);
+        boolean customizeColors = ThemeColorHelper.customizeColors(this);
+        boolean colorizeNavigationBar = ThemeColorHelper.colorizeNavigationBar(this);
+
+
 
         if (mThemeOverlayAccentResId != themeOverlayAccentResId
-                || mCustomizeColors != customizeColors
-                || mPrimaryColor != primaryColor
-                || mColorizeNavigationBar != colorizeNavigationBar
-                || mLightStatusBar != lightStatusBar
                 || mLightActionBar != lightActionBar
-                || mLightNavigationBar != lightNavigationBar) {
+                || mLightStatusBar != lightStatusBar
+                || mLightNavigationBar != lightNavigationBar
+                || mPrimaryColor != primaryColor
+                || mCustomizeColors != customizeColors
+                || mColorizeNavigationBar != colorizeNavigationBar) {
             recreate();
         } else {
             updatePreferences();
