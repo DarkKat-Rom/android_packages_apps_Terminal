@@ -19,13 +19,16 @@
     <!-- Theme.Material (Blackout version) -->
 
     <!-- Never use light action bar and system bars -->
-    <style name="TermTheme" parent="@android:style/Theme.Material.DayNight" />
+    <style name="TermTheme" parent="@android:style/Theme.DarkKat.DayNight" />
     <style name="TermTheme.LightActionBar" />
     <style name="TermTheme.LightStatusBar" />
     <style name="TermTheme.LightNavigationBar" />
     <style name="TermTheme.LightActionBar.LightNavigationBar" />
     <style name="TermTheme.LightStatusBar.LightNavigationBar" />
-    <style name="TermTheme.NoActionBar" parent="@android:style/Theme.Material.DayNight.NoActionBar" />
+    <style name="TermTheme.NoActionBar" parent="@android:style/Theme.DarkKat.DayNight">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+    </style>
     <style name="TermTheme.NoActionBar.LightActionBar" />
     <style name="TermTheme.NoActionBar.LightStatusBar" />
     <style name="TermTheme.NoActionBar.LightNavigationBar" />

@@ -20,14 +20,14 @@
 
     <!-- Always use light action bar and system bars -->
     <style name="TermTheme"
-            parent="@android:style/Theme.Material.DayNight.LightStatusBar.LightNavigationBar" />
+            parent="@android:style/Theme.DarkKat.DayNight.LightStatusBar.LightNavigationBar" />
     <style name="TermTheme.LightActionBar" />
     <style name="TermTheme.LightStatusBar" />
     <style name="TermTheme.LightNavigationBar" />
     <style name="TermTheme.LightActionBar.LightNavigationBar" />
     <style name="TermTheme.LightStatusBar.LightNavigationBar" />
     <style name="TermTheme.NoActionBar"
-            parent="@android:style/Theme.Material.DayNight.LightStatusBar.LightNavigationBar">
+            parent="@android:style/Theme.DarkKat.DayNight.LightStatusBar.LightNavigationBar">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
     </style>
